@@ -19,14 +19,38 @@ import { cn } from "@/lib/utils";
 
 // Esquema de validación
 const registerSchema = z.object({
-    username: z.string().min(3, "El nombre de usuario debe tener al menos 3 caracteres"),
-    email: z.string().email("Debe ser un correo electrónico válido"),
-    password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
-    confirmPassword: z.string().min(8, "La confirmación de contraseña debe tener al menos 8 caracteres"),
-  }).refine(data => data.password === data.confirmPassword, {
-    message: "Las contraseñas no coinciden",
-    path: ["confirmPassword"], // Esto asegura que el error se muestre en el campo confirmPassword
-  });
+  username: z
+    .string()
+    .min(3, "El nombre de usuario debe tener al menos 3 caracteres")
+    .max(20, "El nombre de usuario no puede tener más de 20 caracteres")
+    .regex(
+      /^[a-zA-Z0-9_]+$/,
+      "El nombre de usuario solo puede contener letras, números y guiones bajos (_)"
+    ),
+
+  email: z
+    .string()
+    .email("Debe ser un correo electrónico válido")
+    .regex(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      "El correo electrónico no es válido"
+    ),
+
+  password: z
+    .string()
+    .min(8, "La contraseña debe tener al menos 8 caracteres")
+    .max(16, "La contraseña no puede tener más de 16 caracteres")
+    .regex(
+      /^(?=.*[a-zA-Z])(?=.*\d).+$/,
+      "La contraseña debe ser alfanumérica (letras y números)"
+    ),
+
+  confirmPassword: z.string().min(8, "La confirmación de contraseña debe tener al menos 8 caracteres"),
+})
+.refine((data) => data.password === data.confirmPassword, {
+  message: "Las contraseñas no coinciden",
+  path: ["confirmPassword"], // Esto asegura que el error se muestre en el campo confirmPassword
+});
 
 // Tipo inferido a partir del esquema de Zod
 type RegisterFormData = z.infer<typeof registerSchema>;
@@ -45,14 +69,24 @@ export default function RegisterPage() {
     });
   
     // 2. Define un manejador de envío.
-    const onSubmit = async (data) => {
+    const onSubmit = async (data:RegisterFormData) => {
+
+      // Valida los datos
+      if(data.password !== data.confirmPassword) {
+        alert('Las contraseñas no coinciden');
+        return;
+      }
         try {
           const response = await fetch('/api/auth/register', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify({
+              username: data.username,
+              email: data.email,
+              password: data.password,
+            }),
           });
       
           // Verifica si la respuesta es JSON
