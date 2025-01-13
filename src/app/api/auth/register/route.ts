@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   try {
     // Parsea el cuerpo de la solicitud
     const data = await req.json();
-    console.log('Datos recibidos:', data);
+   
 
      // Aquí puedes agregar la lógica de registro
      const usernamefounds = await db.users.findFirst({
@@ -41,11 +41,12 @@ export async function POST(req: Request) {
         password: hashedPassword,
       },
     });
-    // Por ejemplo, validar los datos, guardar en la base de datos, etc.
+
+    const { password: _, ...userWithoutPassword } = newUser ;
 
     // Devuelve una respuesta exitosa
     return NextResponse.json(
-      { message: 'Registro exitoso', data:newUser },
+      { message: 'Registro exitoso', data: userWithoutPassword },
       { status: 200 }
     );
   } catch (error) {

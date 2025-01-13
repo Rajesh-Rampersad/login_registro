@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 import {
   Form,
@@ -67,6 +68,8 @@ export default function RegisterPage() {
         confirmPassword: "",
       },
     });
+
+    const router = useRouter()
   
     // 2. Define un manejador de envío.
     const onSubmit = async (data:RegisterFormData) => {
@@ -88,24 +91,29 @@ export default function RegisterPage() {
               password: data.password,
             }),
           });
-      
+
+          //redirect to 'login' page
+
+          if (response.ok) {
+            router.push('/login')
+          }
+          
           // Verifica si la respuesta es JSON
           const contentType = response.headers.get('content-type');
           if (!contentType || !contentType.includes('application/json')) {
             const text = await response.text();
             throw new Error(`Respuesta inesperada: ${text}`);
           }
+
       
           // Parsea la respuesta JSON
           const result = await response.json();
           console.log(result);
         } catch (error) {
           console.error('Error al enviar los datos:', error);
-        }
-      
-        
+        }   
 
-      
+             
       }
 
    
