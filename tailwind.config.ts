@@ -10,6 +10,11 @@ export default {
   theme: {
   	extend: {
   		colors: {
+			brand: {
+				light: "#FFC0CB", // Rosado claro
+				DEFAULT: "#FF69B4", // Rosado estándar
+				dark: "#8B008B", // Morado oscuro
+			  },
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

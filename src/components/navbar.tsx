@@ -1,13 +1,72 @@
-//creacion de navbar
-"use client"
+"use client";
 
-import { ToggleTheme } from "./toggle-theme"
+import { ToggleTheme } from "./toggle-theme";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getSession } from "next-auth/react";
+import { Session } from "next-auth";
+
 
 export const Navbar = () => {
-    return (
-        <div className="flex items-center justify-between p-4 mx-auto cursor-pointer sm:max-w-6xl">
-       <ToggleTheme />
-       <h1 className="text-2xl font-bold">Next.js App</h1>
-        </div>
-    )
-}
+  const [session, setSession] = useState<Session | null>(null); // Especifica el tipo del estado
+  
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const sessionData = await getSession();
+        console.log("Session fetched:", sessionData);
+        setSession(sessionData);
+      } catch (error) {
+        console.error("Error fetching session:", error);
+      }
+    };
+  
+    fetchSession();
+  }, []);
+  
+
+  return (
+    <div
+      className="flex items-center justify-between p-4 w-full 
+      bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-500 
+      dark:from-purple-800 dark:via-fuchsia-700 dark:to-pink-700
+      text-white shadow-lg"
+    >
+      {/* Botón de cambio de tema */}
+      <ToggleTheme />
+
+      <nav className="flex justify-between bg-inherit">
+        <h1>NextAuth</h1>
+
+        <ul className="flex gap-x-4">
+          <li>
+            <Link href="/">Home</Link>
+          </li>
+          {!session ? (
+            <>
+              <li>
+                <Link href="/login">Login</Link>
+              </li>
+              <li>
+                <Link href="/register">Register</Link>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link href="/dashboard">Dashboard</Link>
+              </li>
+              <li>
+                <Link href="/api/auth/signout" className="text-sm underline">
+                  Logout
+                </Link>
+              </li>
+            </>
+          )}
+        </ul>
+      </nav>
+
+      <h1 className="text-2xl font-bold">Next.js App</h1>
+    </div>
+  );
+};
