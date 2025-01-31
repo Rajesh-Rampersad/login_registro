@@ -26,12 +26,13 @@ export const Navbar = () => {
   
 
   return (
-    <div
-      className="flex items-center justify-between p-4 w-full 
-      bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-500 
-      dark:from-purple-800 dark:via-fuchsia-700 dark:to-pink-700
-      text-white shadow-lg"
-    >
+<div
+  className="flex items-center justify-between p-4 w-full 
+  bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-700 
+  dark:from-gray-900 dark:via-blue-800 dark:to-gray-700
+  text-white shadow-lg"
+>
+
       {/* Botón de cambio de tema */}
       <ToggleTheme />
 
