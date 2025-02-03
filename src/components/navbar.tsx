@@ -14,7 +14,7 @@ export const Navbar = () => {
     const fetchSession = async () => {
       try {
         const sessionData = await getSession();
-        console.log("Session fetched:", sessionData);
+        // console.log("Session fetched:", sessionData);
         setSession(sessionData);
       } catch (error) {
         console.error("Error fetching session:", error);

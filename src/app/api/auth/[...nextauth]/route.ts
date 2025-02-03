@@ -18,22 +18,30 @@ import bcrypt from 'bcrypt';
                 password: { label: "Password", type: "password", placeholder: "password123" }
             },
             
-            async authorize(credentials: { email: string; password: string }, req) {
-                if (!credentials) {
-                  return null;
-                }
+            async authorize(credentials, req) {
+              // Verificar si credentials está definido
+              if (!credentials?.email || !credentials?.password) {
+                throw new Error("Faltan credenciales");
+              }
               
                 try {
                   const userfound = await db.users.findUnique({
                     where: {
                       email: credentials.email
                     }
-                  });
-              
-                  if (userfound && await bcrypt.compare(credentials.password, userfound.password)) {
-                    return { id: userfound.id, name: userfound.username }; // Devuelve el usuario autenticado
+                  })
+                  if (!userfound) {
+                    throw new Error("Usuario no encontrado");
                   }
-                  return null; // Devuelve null si las credenciales no son válidas
+              
+                  const isPasswordValid = await bcrypt.compare(credentials.password, userfound.password);
+
+                  if (!isPasswordValid) {
+                    throw new Error("Contraseña incorrecta");
+                  }
+                
+                  return { id: String(userfound.id), name: userfound.username };
+
                 } catch (error) {
                   console.error('Error en la autenticación:', error);
                   return null;

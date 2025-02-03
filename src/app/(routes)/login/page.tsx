@@ -54,7 +54,7 @@ export default function LoginPage() {
 
   // Definir un manejador de envio de datos
   const onSubmit = async (data: LoginFormData) => {
-    console.log(data);
+    // console.log(data);
 
     try {
       const res = await signIn("credentials", {
@@ -64,15 +64,23 @@ export default function LoginPage() {
         redirect: false, // Evita la redirección automática
       });
 
-      console.log(res);
+      // console.log(res);
 
       if (res?.error) {
         console.error("Error en la autenticación:", res.error);
-        alert("Credenciales incorrectas. Intenta de nuevo.");
-      } else {
-        // Redirige al usuario si la autenticación es exitosa
-        router.push("/dashboard");
+  
+        if (res.error.includes("CredentialsSignin")) {
+          alert("Correo o contraseña incorrectos. Intenta de nuevo.");
+        } else {
+          alert("Hubo un error en la autenticación. Intenta más tarde.");
+        }
+  
+        return;
       }
+  
+      // Si todo está bien, redirigir al usuario
+      router.push("/dashboard");
+
     } catch (error) {
       console.error("Error al enviar los datos:", error);
     }
