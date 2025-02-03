@@ -80,6 +80,7 @@ export default function LoginPage() {
   
       // Si todo está bien, redirigir al usuario
       router.push("/dashboard");
+      router.refresh();
 
     } catch (error) {
       console.error("Error al enviar los datos:", error);
